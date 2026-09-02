@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Barang
+from models import db, User, Service, Gedung
 from datetime import date
 from dotenv import load_dotenv
 
@@ -90,83 +90,152 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-	return render_template("dashboard.html")
-
-@app.route("/barang")
-@login_required
-def barang():
-	data_barang = db.session.execute(
-		db.select(Barang).order_by(Barang.id.desc())
+	data_service = db.session.execute(
+		db.select(Service).order_by(Service.id.desc())
 	).scalars().all()
-	total_barang = len(data_barang)
-	total_menunggu = sum(1 for barang in data_barang if barang.status_barang == "Menunggu Perbaikan")
-	total_perbaikan = sum(1 for barang in data_barang if barang.status_barang == "Dalam Perbaikan")
-	total_selesai = sum(1 for barang in data_barang if barang.status_barang == "Selesai")
+	total_service = len(data_service)
+	total_menunggu = sum(1 for service in data_service if service.status_service == "Menunggu")
+	total_selesai = sum(1 for service in data_service if service.status_service == "Selesai")
 
 	return render_template(
-		"barang/index.html",
-		data_barang=data_barang,
-		total_barang=total_barang,
+		"dashboard.html",
+		total_service=total_service,
 		total_menunggu=total_menunggu,
-		total_perbaikan=total_perbaikan,
 		total_selesai=total_selesai
 	)
 
-@app.route("/barang/tambah", methods=["POST"])
+@app.route("/service")
 @login_required
-def barang_tambah():
-	nama_barang = request.form.get("nama_barang","").strip()
-	status_barang = request.form.get("status_barang", "").strip()
-	posisi = request.form.get("posisi", "").strip()
-	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
-	tgl_diperbaiki = request.form.get("tgl_diperbaiki", "").strip()
-	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_barang or not status_barang or not posisi or not tgl_perbaikan:
-		return redirect(url_for("barang"))
-	barang = Barang(
-		nama_barang=nama_barang,
-		status_barang=status_barang,
-		posisi=posisi,
-		tgl_perbaikan=parse_date(tgl_perbaikan),
-		tgl_diperbaiki=parse_date(tgl_diperbaiki),
-		keterangan=keterangan or None
+def service():
+	data_service = db.session.execute(
+		db.select(Service).order_by(Service.id.desc())
+	).scalars().all()
+	data_gedung = db.session.execute(
+        db.select(Gedung).order_by(Gedung.id, Gedung.kampus, Gedung.nama_gedung, Gedung.lantai, Gedung.ruang)
+    ).scalars().all()
+	return render_template(
+		"service/index.html",
+		data_service=data_service,
+		data_gedung=data_gedung,
 	)
 
-	db.session.add(barang)
-	db.session.commit()
-	return redirect(url_for("barang"))
-
-@app.route("/barang/edit/<int:id>", methods=["POST"])
+@app.route("/service/tambah", methods=["POST"])
 @login_required
-def barang_edit(id):
-	barang = db.get_or_404(Barang, id)
-	nama_barang = request.form.get("nama_barang","").strip()
-	status_barang = request.form.get("status_barang", "").strip()
+def service_tambah():
+	nama_service = request.form.get("nama_service","").strip()
+	status_service = request.form.get("status_service", "").strip()
 	posisi = request.form.get("posisi", "").strip()
 	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
-	tgl_diperbaiki = request.form.get("tgl_diperbaiki", "").strip()
+	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_barang or not status_barang or not posisi or not tgl_perbaikan:
-	    return redirect(url_for("barang"))
-
-	barang.nama_barang=nama_barang,
-	barang.status_barang=status_barang,
-	barang.posisi=posisi,
-	barang.tgl_perbaikan=parse_date(tgl_perbaikan),
-	barang.tgl_diperbaiki=parse_date(tgl_diperbaiki),
-	barang.keterangan=keterangan or None
-
+	if not nama_service or not status_service or not posisi or not tgl_perbaikan_selanjutnya:
+		return redirect(url_for("service"))
+	service = Service(
+		nama_service=nama_service,
+		status_service=status_service,
+		posisi=posisi,
+		tgl_perbaikan=parse_date(tgl_perbaikan),
+		tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya),
+		keterangan=keterangan or None
+	)
+	db.session.add(service)
 	db.session.commit()
-	return redirect(url_for("barang"))
+	return redirect(url_for("service"))
 
-@app.route("/barang/hapus/<int:id>", methods=["POST"])
+@app.route("/service/edit/<int:id>", methods=["POST"])
 @login_required
-def barang_hapus(id):
-	barang = db.get_or_404(Barang, id)
-	db.session.delete(barang)
+def service_edit(id):
+	service = db.get_or_404(Service, id)
+	nama_service = request.form.get("nama_service","").strip()
+	status_service = request.form.get("status_service", "").strip()
+	posisi = request.form.get("posisi", "").strip()
+	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
+	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
+	keterangan = request.form.get("keterangan", "").strip()
+	if not nama_service or not status_service or not posisi or not tgl_perbaikan_selanjutnya:
+	    return redirect(url_for("service"))
+
+	service.nama_service=nama_service
+	service.status_service=status_service
+	service.posisi=posisi
+	service.tgl_perbaikan=parse_date(tgl_perbaikan)
+	service.tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya)
+	service.keterangan=keterangan or None
+
+	db.session.commit()
+	return redirect(url_for("service"))
+
+@app.route("/service/hapus/<int:id>", methods=["POST"])
+@login_required
+def service_hapus(id):
+	service = db.get_or_404(Service, id)
+	db.session.delete(service)
 	db.session.commit()
 
-	return redirect(url_for("barang"))
+	return redirect(url_for("service"))
+
+@app.route("/gedung")
+@login_required
+def gedung():
+	data_gedung = db.session.execute(
+		db.select(Gedung).order_by(Gedung.id.desc())
+	).scalars().all()
+
+	return render_template(
+		"gedung/index.html",
+		data_gedung=data_gedung,
+	)
+
+@app.route("/gedung/tambah", methods=["POST"])
+@login_required
+def gedung_tambah():
+	kampus = request.form.get("kampus","").strip()
+	nama_gedung = request.form.get("nama_gedung", "").strip()
+	lantai = request.form.get("lantai", "").strip()
+	ruang = request.form.get("ruang", "").strip()
+	keterangan = request.form.get("keterangan", "").strip()
+	if not kampus or not nama_gedung or not lantai or not ruang:
+		return redirect(url_for("gedung"))
+	gedung = Gedung(
+		kampus=kampus,
+		nama_gedung=nama_gedung,
+		lantai=lantai,
+		ruang=ruang,
+		keterangan=keterangan or None
+	)
+	db.session.add(gedung)
+	db.session.commit()
+	return redirect(url_for("gedung"))
+
+@app.route("/gedung/edit/<int:id>", methods=["POST"])
+@login_required
+def gedung_edit(id):
+	gedung = db.get_or_404(Gedung, id)
+	kampus = request.form.get("kampus","").strip()
+	nama_gedung = request.form.get("nama_gedung", "").strip()
+	lantai = request.form.get("lantai", "").strip()
+	ruang = request.form.get("ruang", "").strip()
+	keterangan = request.form.get("keterangan", "").strip()
+	if not kampus or not nama_gedung or not lantai or not ruang:
+		return redirect(url_for("gedung"))
+
+	gedung.kampus=kampus
+	gedung.nama_gedung=nama_gedung
+	gedung.lantai=lantai
+	gedung.ruang=ruang
+	gedung.keterangan=keterangan or None
+
+	db.session.commit()
+	return redirect(url_for("gedung"))
+
+@app.route("/gedung/hapus/<int:id>", methods=["POST"])
+@login_required
+def gedung_hapus(id):
+	gedung = db.get_or_404(Gedung, id)
+	db.session.delete(gedung)
+	db.session.commit()
+
+	return redirect(url_for("gedung"))
 
 @app.route("/logout", methods=["POST"])
 @login_required

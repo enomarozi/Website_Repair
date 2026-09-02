@@ -1,0 +1,49 @@
+<div class="modal fade" id="modalTambahGedung" tabindex="-1" aria-labelledby="modalTambahGedungLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('gedung_tambah') }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalTambahGedungLabel"><i class="bi bi-building me-2"></i>Tambah Gedung</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="kampus" class="form-label fw-semibold"><i class="bi bi-buildings me-1"></i>Kampus</label>
+                            <input type="text" class="form-control" id="kampus" name="kampus" placeholder="Masukkan nama kampus" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nama_gedung" class="form-label fw-semibold"><i class="bi bi-building me-1"></i>Nama Gedung</label>
+                            <input type="text" class="form-control" id="nama_gedung" name="nama_gedung" placeholder="Masukkan nama gedung" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lantai" class="form-label fw-semibold"><i class="bi bi-layers me-1"></i>Lantai</label>
+                            <select class="form-select" id="lantai" name="lantai" required>
+                                <option value="1" selected>Lantai 1</option>
+                                <option value="2">Lantai 2</option>
+                                <option value="3">Lantai 3</option>
+                                <option value="4">Lantai 4</option>
+                                <option value="4.5">Lantai 4.5</option>
+                                <option value="5">Lantai 5</option>
+                                <option value="6">Lantai 6</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ruang" class="form-label fw-semibold"><i class="bi bi-door-open me-1"></i>Ruang</label>
+                            <input type="text" class="form-control" id="ruang" name="ruang" placeholder="Contoh: Ruang 101" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="keterangan" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Keterangan</label>
+                            <textarea class="form-control" id="keterangan" name="keterangan" rows="4" placeholder="Tambahkan keterangan jika diperlukan"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

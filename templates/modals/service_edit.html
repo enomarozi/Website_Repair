@@ -1,0 +1,49 @@
+<div class="modal fade" id="modalEditService{{ service.id }}" tabindex="-1" aria-labelledby="modalEditServuceLabel{{ service.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('service_edit', id=service.id) }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalEditServiceLabel{{ service.id }}"><i class="bi bi-pencil-square me-2"></i>Edit Servuce</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nama_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Nama Service</label>
+                            <input type="text" class="form-control" id="nama_service{{ service.id }}" name="nama_service" value="{{ service.nama_service }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
+                            <select class="form-select" id="status_service{{ service.id }}" name="status_service" required>
+                                <option value="Menunggu" {% if service.status_service == "Menunggu" %}selected{% endif %}>Menunggu</option>
+                                <option value="Dalam Perbaikan" {% if service.status_service == "Dalam Perbaikan" %}selected{% endif %}>Dalam Perbaikan</option>
+                                <option value="Selesai" {% if service.status_service == "Selesai" %}selected{% endif %}>Selesai</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="posisi{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
+                            <input type="text" class="form-control" id="posisi{{ service.id }}" name="posisi" value="{{ service.posisi }}" placeholder="Contoh: Kampus A - Gedung Utama - Lantai 4 - Ruang IT" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tgl_perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-event me-1"></i>Tanggal Perbaikan</label>
+                            <input type="date" class="form-control" id="tgl_perbaikan{{ service.id }}" name="tgl_perbaikan" value="{{ service.tgl_perbaikan.strftime('%Y-%m-%d') if service.tgl_perbaikan else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tgl_perbaikan_selanjutnya{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-check me-1"></i>Tanggal Perbaikan Selanjutnya</label>
+                            <input type="date" class="form-control" id="tgl_perbaikan_selanjutnya{{ service.id }}" name="tgl_perbaikan_selanjutnya" value="{{ service.tgl_perbaikan_selanjutnya.strftime('%Y-%m-%d') if service.tgl_perbaikan_selanjutnya else '' }}">
+                        </div>
+                        <div class="col-12">
+                            <label for="keterangan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Keterangan</label>
+                            <textarea class="form-control" id="keterangan{{ service.id }}" name="keterangan" rows="4" placeholder="Jelaskan kerusakan atau bagian yang diperbaiki">{{ service.keterangan or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
