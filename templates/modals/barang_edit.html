@@ -1,0 +1,67 @@
+<div class="modal fade" id="modalEditBarang{{ barang.id }}" tabindex="-1" aria-labelledby="modalEditBarangLabel{{ barang.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('barang_edit', id=barang.id) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditBarangLabel{{ barang.id }}">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Barang
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nama Barang</label>
+                            <input type="text" class="form-control" name="nama_barang" value="{{ barang.nama_barang }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Status Barang</label>
+                            <select class="form-select" name="status_barang" required>
+                                <option value="Menunggu" {% if barang.status_barang == "Menunggu" %}selected{% endif %}>Menunggu</option>
+                                <option value="Dalam Perbaikan" {% if barang.status_barang == "Dalam Perbaikan" %}selected{% endif %}>Dalam Perbaikan</option>
+                                <option value="Selesai" {% if barang.status_barang == "Selesai" %}selected{% endif %}>Selesai</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Posisi</label>
+                            <input type="text" class="form-control" name="posisi" value="{{ barang.posisi }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Perbaikan</label>
+                            <input type="date" class="form-control" name="tgl_perbaikan" value="{{ barang.tgl_perbaikan.strftime('%Y-%m-%d') if barang.tgl_perbaikan else '' }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Diperbaiki</label>
+                            <input type="date" class="form-control" name="tgl_diperbaiki" value="{{ barang.tgl_diperbaiki.strftime('%Y-%m-%d') if barang.tgl_diperbaiki else '' }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Keterangan</label>
+                            <textarea class="form-control" name="keterangan" rows="4" placeholder="Jelaskan kerusakan atau bagian yang diperbaiki">{{ barang.keterangan or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

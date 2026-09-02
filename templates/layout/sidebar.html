@@ -1,0 +1,64 @@
+<div class="offcanvas-md offcanvas-start bg-dark text-white" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel" style="width: 250px;">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title" id="sidebarMenuLabel">
+            <i class="bi bi-grid me-2"></i>
+            Menu
+        </h5>
+
+        <button type="button" class="btn-close btn-close-white d-md-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column p-3">
+        <div class="mb-3">
+            <small class="text-secondary text-uppercase">Menu Utama</small>
+        </div>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="{{ url_for('dashboard') }}" class="nav-link text-white">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Dashboard
+                </a>
+            </li>
+
+            <a href="{{ url_for('barang') }}" class="nav-link text-white">
+                <i class="bi bi-box-seam me-2"></i>
+                Data Barang
+            </a>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">
+                    <i class="bi bi-tools me-2"></i>
+                    Perbaikan
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Riwayat
+                </a>
+            </li>
+        </ul>
+
+        <hr class="border-secondary">
+
+        <small class="text-secondary text-uppercase mb-3">Sistem</small>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="#" class="nav-link text-white">
+                    <i class="bi bi-person me-2"></i>
+                    Pengguna
+                </a>
+            </li>
+        </ul>
+
+        <div class="mt-auto pt-3">
+            <div class="border-top border-secondary pt-3">
+                <small class="text-secondary">Website Repair</small>
+                <div class="small">v1.0.0</div>
+            </div>
+        </div>
+    </div>
+</div>
