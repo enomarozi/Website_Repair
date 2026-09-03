@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_login import LoginManager, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
@@ -41,6 +41,7 @@ limiter = Limiter(
 	default_limits=[],
 )
 
+PILIHAN_LANTAI = {"1","2","3","4","4.5","5","6"}
 @login_manager.user_loader
 def load_user(user_id):
 	return db.session.get(User, int(user_id))
@@ -122,18 +123,19 @@ def service():
 @app.route("/service/tambah", methods=["POST"])
 @login_required
 def service_tambah():
+	gedung = get_gedung_or_404()
 	nama_service = request.form.get("nama_service","").strip()
 	status_service = request.form.get("status_service", "").strip()
-	posisi = request.form.get("posisi", "").strip()
+	gedung_id = request.form.get("gedung_id", "").strip()
 	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
 	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_service or not status_service or not posisi or not tgl_perbaikan_selanjutnya:
+	if not nama_service or not status_service or not gedung_id or not tgl_perbaikan_selanjutnya:
 		return redirect(url_for("service"))
 	service = Service(
 		nama_service=nama_service,
 		status_service=status_service,
-		posisi=posisi,
+		gedung_id=gedung_id,
 		tgl_perbaikan=parse_date(tgl_perbaikan),
 		tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya),
 		keterangan=keterangan or None
@@ -146,18 +148,19 @@ def service_tambah():
 @login_required
 def service_edit(id):
 	service = db.get_or_404(Service, id)
+	gedung = get_gedung_or_404()
 	nama_service = request.form.get("nama_service","").strip()
 	status_service = request.form.get("status_service", "").strip()
-	posisi = request.form.get("posisi", "").strip()
+	gedung_id = request.form.get("gedung_id", "").strip()
 	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
 	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_service or not status_service or not posisi or not tgl_perbaikan_selanjutnya:
+	if not nama_service or not status_service or not gedung_id or not tgl_perbaikan_selanjutnya:
 	    return redirect(url_for("service"))
 
 	service.nama_service=nama_service
 	service.status_service=status_service
-	service.posisi=posisi
+	service.gedung_id=gedung_id
 	service.tgl_perbaikan=parse_date(tgl_perbaikan)
 	service.tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya)
 	service.keterangan=keterangan or None
@@ -189,6 +192,9 @@ def gedung():
 @app.route("/gedung/tambah", methods=["POST"])
 @login_required
 def gedung_tambah():
+	lantai = request.form.get("lantai")
+	if lantai not in PILIHAN_LANTAI:
+		abort(404)
 	kampus = request.form.get("kampus","").strip()
 	nama_gedung = request.form.get("nama_gedung", "").strip()
 	lantai = request.form.get("lantai", "").strip()
@@ -211,6 +217,9 @@ def gedung_tambah():
 @login_required
 def gedung_edit(id):
 	gedung = db.get_or_404(Gedung, id)
+	lantai = request.form.get("lantai")
+	if lantai not in PILIHAN_LANTAI:
+		abort(404)
 	kampus = request.form.get("kampus","").strip()
 	nama_gedung = request.form.get("nama_gedung", "").strip()
 	lantai = request.form.get("lantai", "").strip()
@@ -243,6 +252,15 @@ def logout():
 	logout_user()
 	return redirect(url_for("login"))
 
+def get_gedung_or_404():
+    gedung_id = request.form.get("gedung_id", type=int)
+    if not gedung_id:
+        abort(404)
+    return db.get_or_404(Gedung, gedung_id)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("errors/404.html"), 404
 
 if __name__ == "__main__":
 	with app.app_context():

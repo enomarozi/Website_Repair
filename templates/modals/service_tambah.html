@@ -22,8 +22,9 @@
                         </div>
                         <div class="col-12">
                             <label for="posisi" class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
-                            <select class="form-select" id="posisi" name="posisi" required>
+                            <select class="form-select" id="gedung_id" name="gedung_id" required>
                                 <option value="" selected disabled>Pilih posisi gedung</option>
+
                                 {% for gedung in data_gedung %}
                                 <option value="{{ gedung.id }}">
                                     {{ gedung.kampus }} - {{ gedung.nama_gedung }} - Lantai {{ gedung.lantai }} - {{ gedung.ruang }}

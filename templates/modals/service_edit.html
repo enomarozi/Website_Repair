@@ -22,8 +22,24 @@
                             </select>
                         </div>
                         <div class="col-12">
-                            <label for="posisi{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
-                            <input type="text" class="form-control" id="posisi{{ service.id }}" name="posisi" value="{{ service.posisi }}" placeholder="Contoh: Kampus A - Gedung Utama - Lantai 4 - Ruang IT" required>
+                            <label for="gedung_id{{ service.id }}" class="form-label fw-semibold">
+                                <i class="bi bi-geo-alt me-1"></i>Posisi
+                            </label>
+                            <select class="form-select" id="gedung_id{{ service.id }}" name="gedung_id" required>
+                                <option value="" disabled
+                                    {% if not service.gedung_id %}selected{% endif %}>
+                                    Pilih posisi gedung
+                                </option>
+                                {% for gedung in data_gedung %}
+                                <option value="{{ gedung.id }}"
+                                    {% if gedung.id == service.gedung_id %}selected{% endif %}>
+                                    {{ gedung.kampus }} -
+                                    {{ gedung.nama_gedung }} -
+                                    Lantai {{ gedung.lantai }} -
+                                    {{ gedung.ruang }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="tgl_perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-event me-1"></i>Tanggal Perbaikan</label>

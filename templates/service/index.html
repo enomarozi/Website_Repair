@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block title %}Data Service - Website Repair{% endblock %}
+{% block title %}Data Service - ServiceHub{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
@@ -54,7 +54,12 @@
                                 <span class="badge text-bg-secondary">{{ service.status_service }}</span>
                             {% endif %}
                         </td>
-                        <td style="min-width: 280px;">{{ service.posisi }}</td>
+                        <td style="min-width: 280px;">
+                            {{ service.gedung.kampus }}
+                            - {{ service.gedung.nama_gedung }}
+                            - Lantai {{ service.gedung.lantai }}
+                            - {{ service.gedung.ruang }}
+                        </td>
                         <td class="text-nowrap">{{ service.tgl_perbaikan.strftime("%d %b %Y") if service.tgl_perbaikan else "-" }}</td>
                         <td class="text-nowrap">{{ service.tgl_perbaikan_selanjutnya.strftime("%d %b %Y") if service.tgl_perbaikan_selanjutnya else "-" }}</td>
                         <td style="min-width: 220px;">{{ service.keterangan or "-" }}</td>
