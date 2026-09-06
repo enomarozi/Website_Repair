@@ -1,5 +1,5 @@
 from app import app
-from models import db, User, Service
+from models import db, User, Service, Perangkat
 from werkzeug.security import generate_password_hash
 
 with app.app_context():

@@ -36,6 +36,12 @@
                     Gedung
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="{{ url_for('perangkat') }}" class="nav-link {% if request.endpoint == 'perangkat' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-box-seam me-2"></i>Perangkat
+                </a>
+            </li>
         </ul>
 
         <hr class="border-secondary my-4">

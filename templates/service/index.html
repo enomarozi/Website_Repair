@@ -20,7 +20,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Nama Service</th>
+                        <th>Service</th>
                         <th>Status</th>
                         <th>Posisi</th>
                         <th>Tgl Perbaikan</th>
@@ -49,26 +49,34 @@
                             - Lantai {{ service.gedung.lantai }}
                             - {{ service.gedung.ruang }}
                         </td>
-                        <td class="text-nowrap">{{ service.tgl_perbaikan.strftime("%d %b %Y") if service.tgl_perbaikan else "-" }}</td>
-                        <td class="text-nowrap">{{ service.tgl_perbaikan_selanjutnya.strftime("%d %b %Y") if service.tgl_perbaikan_selanjutnya else "-" }}</td>
-                        <td style="min-width: 220px;">{{ service.keterangan or "-" }}</td>
+                        <td class="text-nowrap">
+                            {{ service.tgl_perbaikan.strftime("%d %b %Y") if service.tgl_perbaikan else "-" }}
+                        </td>
+                        <td class="text-nowrap">
+                            {{ service.tgl_perbaikan_selanjutnya.strftime("%d %b %Y") if service.tgl_perbaikan_selanjutnya else "-" }}
+                        </td>
+                        <td style="min-width: 220px;">
+                            {{ service.keterangan or "-" }}
+                        </td>
                         <td>
                             <div class="d-flex justify-content-center gap-1">
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditService{{ service.id }}" title="Edit">
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEditService{{ service.id }}"
+                                    title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalDeleteService{{ service.id }}" title="Hapus">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDeleteService{{ service.id }}"
+                                    title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="8" class="text-center py-5">
-                            <div class="text-body-secondary">
-                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                Belum ada data service.
                             </div>
                         </td>
                     </tr>

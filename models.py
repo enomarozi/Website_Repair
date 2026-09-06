@@ -27,3 +27,10 @@ class Gedung(db.Model):
 	lantai = db.Column(db.String(3), nullable=False, default="1")
 	ruang = db.Column(db.String(100), nullable=False)
 	keterangan = db.Column(db.Text, nullable=True)
+
+class Perangkat(db.Model):
+	__tablename__ = "perangkat"
+	id = db.Column(db.Integer, primary_key=True)
+	perangkat = db.Column(db.String(100), nullable=False)
+	merek = db.Column(db.String(100), nullable=False)
+	type = db.Column(db.String(100), nullable=False)

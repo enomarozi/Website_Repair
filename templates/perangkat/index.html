@@ -1,49 +1,45 @@
 {% extends "layout/base.html" %}
 
-{% block title %}Gedung - ServiceHub{% endblock %}
+{% block title %}Data Perangkat - ServiceHub{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1"><i class="bi bi-building me-2"></i>Gedung</h1>
-        <p class="text-body-secondary mb-0">Kelola lokasi gedung.</p>
+        <h1 class="h3 mb-1"><i class="bi bi-tools me-2"></i>Data Perangkat</h1>
+        <p class="text-body-secondary mb-0">Kelola data perangkat.</p>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahGedung">
-        <i class="bi bi-plus-lg me-1"></i>Tambah Gedung
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahPerangkat">
+        <i class="bi bi-plus-lg me-1"></i>Tambah Perangkat
     </button>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
         <div class="table-responsive">
-            <table id="gedungTable" class="table table-hover align-middle mb-0">
+            <table id="perangkatTable" class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kampus</th>
-                        <th>Nama Gedung</th>
-                        <th>Lantai</th>
-                        <th>Ruang</th>
-                        <th>Keterangan</th>
+                        <th>Perangkat</th>
+                        <th>Merek</th>
+                        <th>Type</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for gedung in data_gedung %}
+                    {% for perangkat in data_perangkat %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td class="fw-semibold">{{ gedung.kampus }}</td>
-                        <td>{{ gedung.nama_gedung }}</td>
-                        <td class="text-nowrap">Lantai {{ gedung.lantai }}</td>
-                        <td class="text-nowrap">{{ gedung.ruang }}</td>
-                        <td style="min-width: 250px;">{{ gedung.keterangan or "-" }}</td>
+                        <td class="fw-semibold">{{ perangkat.perangkat }}</td>
+                        <td class="fw-semibold">{{ perangkat.merek }}</td>
+                        <td class="fw-semibold">{{ perangkat.type }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-1">
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-outline-primary"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalEditGedung{{ gedung.id }}"
+                                    data-bs-target="#modalEditPerangkat{{ perangkat.id }}"
                                     title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -52,7 +48,7 @@
                                     type="button"
                                     class="btn btn-sm btn-outline-danger"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalDeleteGedung{{ gedung.id }}"
+                                    data-bs-target="#modalDeletePerangkat{{ perangkat.id }}"
                                     title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -71,7 +67,7 @@
 
 <script>
 $(document).ready(function() {
-    $('#gedungTable').DataTable({
+    $('#perangkatTable').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50, 100],
         order: [[0, 'asc']],
@@ -79,7 +75,7 @@ $(document).ready(function() {
             {
                 orderable: false,
                 searchable: false,
-                targets: 6
+                targets: 4
             }
         ],
         language: {
@@ -88,7 +84,7 @@ $(document).ready(function() {
             info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
             infoEmpty: "Tidak ada data",
             zeroRecords: "Data tidak ditemukan",
-            emptyTable: "Belum ada data gedung",
+            emptyTable: "Belum ada data perangkat",
             paginate: {
                 first: "Pertama",
                 last: "Terakhir",
@@ -99,10 +95,10 @@ $(document).ready(function() {
     });
 });
 </script>
-{% include "modals/gedung_tambah.html" %}
+{% include "modals/perangkat_tambah.html" %}
 
-{% for gedung in data_gedung %}
-    {% include "modals/gedung_edit.html" %}
-    {% include "modals/gedung_delete.html" %}
+{% for perangkat in data_perangkat %}
+    {% include "modals/perangkat_edit.html" %}
+    {% include "modals/perangkat_delete.html" %}
 {% endfor %}
 {% endblock %}

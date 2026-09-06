@@ -1,0 +1,33 @@
+<div class="modal fade" id="modalTambahPerangkat" tabindex="-1" aria-labelledby="modalTambahPerangkatLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('perangkat_tambah') }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalTambahPerangkatLabel"><i class="bi bi-box-seam me-2"></i>Tambah Perangkat</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="perangkat" class="form-label fw-semibold"><i class="bi bi-box-seam me-1 text-primary"></i>Nama Perangkat</label>
+                            <input type="text" class="form-control" id="perangkat" name="perangkat" placeholder="Contoh: AC, Printer, Laptop, CCTV" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="merek" class="form-label fw-semibold"><i class="bi bi-tag me-1 text-primary"></i>Merek</label>
+                            <input type="text" class="form-control" id="merek" name="merek" placeholder="Masukkan merek perangkat" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="type" class="form-label fw-semibold"><i class="bi bi-card-text me-1 text-primary"></i>Type / Model</label>
+                            <input type="text" class="form-control" id="type" name="type" placeholder="Masukkan type atau model" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

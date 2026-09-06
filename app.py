@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Service, Gedung
+from models import db, User, Service, Gedung, Perangkat
 from datetime import date
 from dotenv import load_dotenv
 
@@ -245,6 +245,61 @@ def gedung_hapus(id):
 	db.session.commit()
 
 	return redirect(url_for("gedung"))
+
+@app.route("/perangkat")
+@login_required
+def perangkat():
+	data_perangkat = db.session.execute(
+		db.select(Perangkat).order_by(Perangkat.id.desc())
+	).scalars().all()
+
+	return render_template(
+		"perangkat/index.html",
+		data_perangkat=data_perangkat,
+	)
+
+@app.route("/perangkat/tambah", methods=["POST"])
+@login_required
+def perangkat_tambah():
+	perangkat = request.form.get("perangkat","").strip()
+	merek = request.form.get("merek", "").strip()
+	type = request.form.get("type", "").strip()
+	if not perangkat or not merek or not type:
+		return redirect(url_for("perangkat"))
+	perangkat = Perangkat(
+		perangkat=perangkat,
+		merek=merek,
+		type=type,
+	)
+	db.session.add(perangkat)
+	db.session.commit()
+	return redirect(url_for("perangkat"))
+
+@app.route("/perangkat/edit/<int:id>", methods=["POST"])
+@login_required
+def perangkat_edit(id):
+	perangkat = db.get_or_404(Perangkat, id)
+	nama_perangkat = request.form.get("perangkat","").strip()
+	merek = request.form.get("merek", "").strip()
+	type = request.form.get("type", "").strip()
+	if not perangkat or not merek or not type:
+		return redirect(url_for("perangkat"))
+
+	perangkat.perangkat=nama_perangkat
+	perangkat.merek=merek
+	perangkat.type=type
+
+	db.session.commit()
+	return redirect(url_for("perangkat"))
+
+@app.route("/perangkat/hapus/<int:id>", methods=["POST"])
+@login_required
+def perangkat_hapus(id):
+	perangkat = db.get_or_404(Perangkat, id)
+	db.session.delete(perangkat)
+	db.session.commit()
+
+	return redirect(url_for("perangkat"))
 
 @app.route("/logout", methods=["POST"])
 @login_required
