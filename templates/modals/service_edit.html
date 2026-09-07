@@ -9,16 +9,21 @@
                 <div class="modal-body p-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="nama_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Nama Service</label>
-                            <input type="text" class="form-control" id="nama_service{{ service.id }}" name="nama_service" value="{{ service.nama_service }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="status_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
-                            <select class="form-select" id="status_service{{ service.id }}" name="status_service" required>
-                                <option value="Menunggu" {% if service.status_service == "Menunggu" %}selected{% endif %}>Menunggu</option>
-                                <option value="Dalam Perbaikan" {% if service.status_service == "Dalam Perbaikan" %}selected{% endif %}>Dalam Perbaikan</option>
-                                <option value="Selesai" {% if service.status_service == "Selesai" %}selected{% endif %}>Selesai</option>
+                        <div class="col-12">
+                            <label for="posisi" class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
+                            <select class="form-select" id="perangkat_id{{ service.id }}" name="perangkat_id" required>
+                                <option value="" disabled
+                                    {% if not service.perangkat_id %}selected{% endif %}>
+                                    Pilih perangkat
+                                </option>
+                                {% for perangkat in data_perangkat %}
+                                <option value="{{ perangkat.id }}"
+                                    {% if perangkat.id == service.perangkat_id %}selected{% endif %}>
+                                    {{ perangkat.perangkat }}
+                                    Merek {{ perangkat.merek }}
+                                    Type {{ perangkat.type }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-12">
@@ -39,6 +44,14 @@
                                     {{ gedung.ruang }}
                                 </option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="status_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
+                            <select class="form-select" id="status_service{{ service.id }}" name="status_service" required>
+                                <option value="Menunggu" {% if service.status_service == "Menunggu" %}selected{% endif %}>Menunggu</option>
+                                <option value="Dalam Perbaikan" {% if service.status_service == "Dalam Perbaikan" %}selected{% endif %}>Dalam Perbaikan</option>
+                                <option value="Selesai" {% if service.status_service == "Selesai" %}selected{% endif %}>Selesai</option>
                             </select>
                         </div>
                         <div class="col-md-6">

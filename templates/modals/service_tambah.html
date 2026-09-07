@@ -9,15 +9,15 @@
                 <div class="modal-body p-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="nama_service" class="form-label fw-semibold"><i class="bi bi-tools me-1"></i>Service</label>
-                            <input type="text" class="form-control" id="nama_service" name="nama_service" placeholder="Masukkan nama service" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="status_service" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
-                            <select class="form-select" id="status_service" name="status_service" required>
-                                <option value="Menunggu" selected>Menunggu</option>
-                                <option value="Selesai">Selesai</option>
+                        <div class="col-12">
+                            <label for="posisi" class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
+                            <select class="form-select" id="perangkat_id" name="perangkat_id" required>
+                                <option value="" selected disabled>Pilih perangkat</option>
+                                {% for perangkat in data_perangkat %}
+                                <option value="{{ perangkat.id }}">
+                                    {{ perangkat.perangkat }} Merek {{ perangkat.merek }} Type {{ perangkat.type }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-12">
@@ -30,6 +30,13 @@
                                     {{ gedung.kampus }} - {{ gedung.nama_gedung }} - Lantai {{ gedung.lantai }} - {{ gedung.ruang }}
                                 </option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="status_service" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
+                            <select class="form-select" id="status_service" name="status_service" required>
+                                <option value="Menunggu" selected>Menunggu</option>
+                                <option value="Selesai">Selesai</option>
                             </select>
                         </div>
                         <div class="col-md-6">

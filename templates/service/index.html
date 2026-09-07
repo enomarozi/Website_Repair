@@ -33,7 +33,7 @@
                     {% for service in data_service %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td class="fw-semibold">{{ service.nama_service }}</td>
+                        <td class="fw-semibold">{{ service.perangkat.perangkat }} {{ service.perangkat.merek }} {{ service.perangkat.type }}</td>
                         <td>
                             {% if service.status_service == "Menunggu" %}
                                 <span class="badge text-bg-warning">Menunggu</span>

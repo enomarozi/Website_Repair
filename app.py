@@ -108,34 +108,32 @@ def dashboard():
 @app.route("/service")
 @login_required
 def service():
-	data_service = db.session.execute(
-		db.select(Service).order_by(Service.id.desc())
-	).scalars().all()
-	data_gedung = db.session.execute(
-        db.select(Gedung).order_by(Gedung.id, Gedung.kampus, Gedung.nama_gedung, Gedung.lantai, Gedung.ruang)
-    ).scalars().all()
-	return render_template(
-		"service/index.html",
-		data_service=data_service,
-		data_gedung=data_gedung,
-	)
+    data_service = db.session.execute(db.select(Service).order_by(Service.id.desc())).scalars().all()
+    data_gedung = db.session.execute(db.select(Gedung).order_by(Gedung.id, Gedung.kampus, Gedung.nama_gedung, Gedung.lantai, Gedung.ruang)).scalars().all()
+    data_perangkat = db.session.execute(db.select(Perangkat).order_by(Perangkat.id.desc())).scalars().all()
+    return render_template(
+        "service/index.html",
+        data_service=data_service,
+        data_gedung=data_gedung,
+        data_perangkat=data_perangkat,
+    )
 
 @app.route("/service/tambah", methods=["POST"])
 @login_required
 def service_tambah():
 	gedung = get_gedung_or_404()
-	nama_service = request.form.get("nama_service","").strip()
-	status_service = request.form.get("status_service", "").strip()
+	perangkat_id = request.form.get("perangkat_id","").strip()
 	gedung_id = request.form.get("gedung_id", "").strip()
+	status_service = request.form.get("status_service", "").strip()
 	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
 	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_service or not status_service or not gedung_id or not tgl_perbaikan_selanjutnya:
+	if not perangkat_id or not gedung_id or not status_service or not tgl_perbaikan or not tgl_perbaikan_selanjutnya:
 		return redirect(url_for("service"))
 	service = Service(
-		nama_service=nama_service,
-		status_service=status_service,
+		perangkat_id=perangkat_id,
 		gedung_id=gedung_id,
+		status_service=status_service,
 		tgl_perbaikan=parse_date(tgl_perbaikan),
 		tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya),
 		keterangan=keterangan or None
@@ -149,18 +147,18 @@ def service_tambah():
 def service_edit(id):
 	service = db.get_or_404(Service, id)
 	gedung = get_gedung_or_404()
-	nama_service = request.form.get("nama_service","").strip()
-	status_service = request.form.get("status_service", "").strip()
+	perangkat_id = request.form.get("perangkat_id","").strip()
 	gedung_id = request.form.get("gedung_id", "").strip()
+	status_service = request.form.get("status_service", "").strip()
 	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
 	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not nama_service or not status_service or not gedung_id or not tgl_perbaikan_selanjutnya:
+	if not perangkat_id or not gedung_id or not status_service or not tgl_perbaikan or not tgl_perbaikan_selanjutnya:
 	    return redirect(url_for("service"))
 
-	service.nama_service=nama_service
-	service.status_service=status_service
+	service.perangkat_id=perangkat_id
 	service.gedung_id=gedung_id
+	service.status_service=status_service
 	service.tgl_perbaikan=parse_date(tgl_perbaikan)
 	service.tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya)
 	service.keterangan=keterangan or None

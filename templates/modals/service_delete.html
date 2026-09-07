@@ -10,7 +10,7 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <p class="mb-3">Apakah kamu yakin ingin menghapus service berikut?</p>
                     <div class="alert alert-warning mb-0">
-                        <div class="fw-semibold"><i class="bi bi-tools me-2"></i>{{ service.nama_service }}</div>
+                        <div class="fw-semibold"><i class="bi bi-tools me-2"></i>{{ service.perangkat.perangkat }} {{ service.perangkat.merek }} {{ service.perangkat.type }}</div>
                         <div><i class="bi bi-geo-alt me-2"></i>
                             {{ service.gedung.kampus }} -
                             {{ service.gedung.nama_gedung }} -

@@ -11,10 +11,11 @@ class User(UserMixin, db.Model):
 class Service(db.Model):
 	__tablename__ = "service"
 	id = db.Column(db.Integer, primary_key=True)
-	nama_service = db.Column(db.String(150), nullable=False)
-	status_service = db.Column(db.String(50), nullable=False, default="Menunggu")
+	perangkat_id = db.Column(db.Integer,db.ForeignKey("perangkat.id"), nullable=False)
+	perangkat = db.relationship("Perangkat", backref="services")
 	gedung_id = db.Column(db.Integer,db.ForeignKey("gedung.id"), nullable=False)
 	gedung = db.relationship("Gedung", backref="services")
+	status_service = db.Column(db.String(50), nullable=False, default="Menunggu")
 	tgl_perbaikan = db.Column(db.Date, nullable=False)
 	tgl_perbaikan_selanjutnya = db.Column(db.Date, nullable=False)
 	keterangan = db.Column(db.Text, nullable=True)
