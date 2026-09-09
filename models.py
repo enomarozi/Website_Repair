@@ -39,9 +39,19 @@ class Perangkat(db.Model):
 class Perbaikan(db.Model):
 	__tablename__ = "perbaikan"
 	id = db.Column(db.Integer, primary_key=True)
-	perangkat_id = db.Column(db.Integer,db.ForeignKey("perangkat.id"), nullable=False)
+	perangkat_id = db.Column(db.Integer, db.ForeignKey("perangkat.id"), nullable=False)
 	perangkat = db.relationship("Perangkat", backref="perbaikan")
 	gedung_id = db.Column(db.Integer, db.ForeignKey("gedung.id"), nullable=False)
 	gedung = db.relationship("Gedung", backref="perbaikan")
-	perbaikan = db.Column(db.Text, nullable=False)
 	tgl_perbaikan = db.Column(db.Date, nullable=False)
+	details = db.relationship("DetailPerbaikan", backref="perbaikan_data", cascade="all, delete-orphan")
+
+class DetailPerbaikan(db.Model):
+	__tablename__ = "detail_perbaikan"
+	id = db.Column(db.Integer, primary_key=True)
+	perbaikan_id = db.Column(db.Integer, db.ForeignKey("perbaikan.id"), nullable=False)
+	uraian = db.Column(db.String(255), nullable=False)
+	satuan = db.Column(db.Integer, nullable=False, default=1)
+	vol = db.Column(db.Enum("PCS", "UNIT", name="satuan_perbaikan"), nullable=False)
+	harga_satuan = db.Column(db.Numeric(15, 2), nullable=False, default=0)
+	total_harga = db.Column(db.Numeric(15, 2), nullable=False, default=0)

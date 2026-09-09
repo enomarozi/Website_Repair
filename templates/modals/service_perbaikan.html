@@ -1,46 +1,183 @@
 <div class="modal fade" id="modalPerbaikanService{{ service.id }}" tabindex="-1" aria-labelledby="modalPerbaikanServiceLabel{{ service.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <form method="POST" action="{{ url_for('service_perbaikan', id=service.id) }}">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="modalPerbaikanServiceLabel{{ service.id }}"><i class="bi bi-pencil-square me-2"></i>Perbaikan</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body p-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="perangkat_id" value="{{ service.perangkat.id }}">
                     <input type="hidden" name="gedung_id" value="{{ service.gedung.id }}">
+
                     <div class="row g-3">
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
                             <div class="form-control bg-light">
                                 {{ service.perangkat.perangkat }} | {{ service.perangkat.merek }} | {{ service.perangkat.type }}
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
                             <div class="form-control bg-light">
                                 Kampus {{ service.gedung.kampus }} - {{ service.gedung.nama_gedung }} - Lantai {{ service.gedung.lantai }} - Ruang {{ service.gedung.ruang }}
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="tgl_perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-event me-1"></i>Tanggal Perbaikan</label>
                             <input type="date" class="form-control" id="tgl_perbaikan{{ service.id }}" name="tgl_perbaikan" value="{{ service.tgl_perbaikan.strftime('%Y-%m-%d') if service.tgl_perbaikan else '' }}" required>
                         </div>
+                    </div>
 
-                        <div class="col-12">
-                            <label for="perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Perbaikan</label>
-                            <textarea class="form-control" id="perbaikan{{ service.id }}" name="perbaikan" rows="3" placeholder="Jelaskan kerusakan atau bagian yang diperbaiki, dipisah koma(,)">{{ service.perbaikan or '' }}</textarea>
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="fw-semibold mb-1"><i class="bi bi-tools me-1"></i>Detail Perbaikan</h6>
+                            <small class="text-muted">Tambahkan uraian dan biaya perbaikan.</small>
                         </div>
+
+                        <button type="button" class="btn btn-sm btn-success" onclick="tambahPerbaikan{{ service.id }}()">
+                            <i class="bi bi-plus-circle me-1"></i>Tambah Perbaikan
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Uraian Perbaikan</th>
+                                    <th style="width: 120px;">Satuan</th>
+                                    <th style="width: 100px;">Vol</th>
+                                    <th style="width: 180px;">Harga Satuan</th>
+                                    <th style="width: 180px;">Total Harga</th>
+                                    <th style="width: 55px;"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="detailPerbaikan{{ service.id }}">
+                                <tr>
+                                    <td>
+                                        <input type="text" class="form-control" name="uraian[]" placeholder="Contoh: Ganti Freon" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control satuan" name="satuan[]" value="1" min="1" step="1" oninput="hitungTotal{{ service.id }}(this)" required>
+                                    </td>
+                                    <td>
+                                        <select class="form-select" name="vol[]" required>
+                                            <option value="">Pilih</option>
+                                            <option value="PCS">PCS</option>
+                                            <option value="UNIT">UNIT</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control harga" name="harga_satuan[]" value="0" min="0" step="1" oninput="hitungTotal{{ service.id }}(this)" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control total text-end bg-light" value="0" readonly>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="hapusPerbaikan{{ service.id }}(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-end">Total Keseluruhan</th>
+                                    <th>
+                                        <input type="text" id="grandTotal{{ service.id }}" class="form-control text-end fw-bold bg-light" value="0" readonly>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
+
                 <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan Perbaikan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>Batal
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Simpan Perbaikan
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+function tambahPerbaikan{{ service.id }}() {
+    const tbody = document.getElementById('detailPerbaikan{{ service.id }}');
+    const row = document.createElement('tr');
+
+    row.innerHTML = `
+        <td>
+            <input type="text" class="form-control" name="uraian[]" placeholder="Contoh: Ganti RAM" required>
+        </td>
+        <td>
+            <select class="form-select" name="volume[]" required>
+                <option value="">Pilih</option>
+                <option value="PCS">PCS</option>
+                <option value="UNIT">UNIT</option>
+            </select>
+        </td>
+        <td>
+            <input type="number" class="form-control satuan" name="satuan[]" value="1" min="1" step="1" oninput="hitungTotal{{ service.id }}(this)" required>
+        </td>
+        <td>
+            <input type="number" class="form-control harga" name="harga_satuan[]" value="0" min="0" step="1" oninput="hitungTotal{{ service.id }}(this)" required>
+        </td>
+        <td>
+            <input type="text" class="form-control total text-end bg-light" value="0" readonly>
+        </td>
+        <td class="text-center">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="hapusPerbaikan{{ service.id }}(this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </td>
+    `;
+
+    tbody.appendChild(row);
+}
+
+function hapusPerbaikan{{ service.id }}(button) {
+    const tbody = document.getElementById('detailPerbaikan{{ service.id }}');
+
+    if (tbody.rows.length > 1) {
+        button.closest('tr').remove();
+        hitungGrandTotal{{ service.id }}();
+    }
+}
+
+function hitungTotal{{ service.id }}(input) {
+    const row = input.closest('tr');
+    const satuan = parseInt(row.querySelector('.satuan').value) || 0;
+    const harga = parseFloat(row.querySelector('.harga').value) || 0;
+    const total = satuan * harga;
+
+    row.querySelector('.total').value = total.toLocaleString('id-ID');
+
+    hitungGrandTotal{{ service.id }}();
+}
+
+function hitungGrandTotal{{ service.id }}() {
+    let grandTotal = 0;
+
+    document.querySelectorAll('#detailPerbaikan{{ service.id }} .total').forEach(function(input) {
+        const value = input.value.replace(/\./g, '').replace(',', '.');
+        grandTotal += parseFloat(value) || 0;
+    });
+
+    document.getElementById('grandTotal{{ service.id }}').value = grandTotal.toLocaleString('id-ID');
+}
+</script>
