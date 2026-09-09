@@ -35,3 +35,13 @@ class Perangkat(db.Model):
 	perangkat = db.Column(db.String(100), nullable=False)
 	merek = db.Column(db.String(100), nullable=False)
 	type = db.Column(db.String(100), nullable=False)
+
+class Perbaikan(db.Model):
+	__tablename__ = "perbaikan"
+	id = db.Column(db.Integer, primary_key=True)
+	perangkat_id = db.Column(db.Integer,db.ForeignKey("perangkat.id"), nullable=False)
+	perangkat = db.relationship("Perangkat", backref="perbaikan")
+	gedung_id = db.Column(db.Integer, db.ForeignKey("gedung.id"), nullable=False)
+	gedung = db.relationship("Gedung", backref="perbaikan")
+	perbaikan = db.Column(db.Text, nullable=False)
+	tgl_perbaikan = db.Column(db.Date, nullable=False)

@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalEditService{{ service.id }}" tabindex="-1" aria-labelledby="modalEditServuceLabel{{ service.id }}" aria-hidden="true">
+<div class="modal fade" id="modalEditService{{ service.id }}" tabindex="-1" aria-labelledby="modalEditServiceLabel{{ service.id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <form method="POST" action="{{ url_for('service_edit', id=service.id) }}">
@@ -50,7 +50,6 @@
                             <label for="status_service{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-clipboard-check me-1"></i>Status Service</label>
                             <select class="form-select" id="status_service{{ service.id }}" name="status_service" required>
                                 <option value="Menunggu" {% if service.status_service == "Menunggu" %}selected{% endif %}>Menunggu</option>
-                                <option value="Dalam Perbaikan" {% if service.status_service == "Dalam Perbaikan" %}selected{% endif %}>Dalam Perbaikan</option>
                                 <option value="Selesai" {% if service.status_service == "Selesai" %}selected{% endif %}>Selesai</option>
                             </select>
                         </div>

@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for, abort, flash
 from flask_login import LoginManager, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Service, Gedung, Perangkat
-from datetime import date
+from models import db, User, Service, Gedung, Perangkat, Perbaikan
+from datetime import date, datetime
 from dotenv import load_dotenv
 
 import os
@@ -175,6 +175,34 @@ def service_hapus(id):
 
 	return redirect(url_for("service"))
 
+@app.route("/service/perbaikan/<int:id>", methods=["POST"])
+@login_required
+def service_perbaikan(id):
+	service = db.get_or_404(Service, id)
+	gedung = get_gedung_or_404()
+	perangkat_id = request.form.get("perangkat_id","").strip()
+	gedung_id = request.form.get("perangkat_id","").strip()
+	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
+	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
+	perbaikan = request.form.get("perbaikan", "").strip()
+	if not perangkat_id or not gedung_id or not tgl_perbaikan or not tgl_perbaikan_selanjutnya or not perbaikan:
+	    return redirect(url_for("service"))
+	service.perangkat_id=perangkat_id
+	service.status_service="Selesai"
+	service.tgl_perbaikan=parse_date(tgl_perbaikan)
+	service.tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya)
+	db.session.commit()
+
+	perbaikan = Perbaikan(
+		perangkat_id=perangkat_id,
+		gedung_id=gedung_id,
+		tgl_perbaikan=parse_date(tgl_perbaikan),
+		perbaikan=perbaikan or None
+	)
+	db.session.add(perbaikan)
+	db.session.commit()
+	return redirect(url_for("service"))
+
 @app.route("/gedung")
 @login_required
 def gedung():
@@ -304,6 +332,40 @@ def perangkat_hapus(id):
 def logout():
 	logout_user()
 	return redirect(url_for("login"))
+
+@app.route("/perbaikan")
+@login_required
+def perbaikan():
+	data_perbaikan = db.session.execute(
+		db.select(Perbaikan).order_by(Perbaikan.id.desc())
+	).scalars().all()
+	return render_template(
+		"perbaikan/index.html",
+		data_perbaikan=data_perbaikan,
+	)
+
+@app.route("/perbaikan/edit/<int:id>", methods=["POST"])
+@login_required
+def perbaikan_edit(id):
+    data = db.get_or_404(Perbaikan, id)
+    data.perbaikan = request.form.get("perbaikan")
+    tgl_perbaikan = request.form.get("tgl_perbaikan")
+    if tgl_perbaikan:
+        data.tgl_perbaikan = datetime.strptime(tgl_perbaikan, "%Y-%m-%d").date()
+    db.session.commit()
+    flash("Data perbaikan berhasil diperbarui.", "success")
+    return redirect(url_for("perbaikan"))
+
+@app.route("/perbaikan/delete/<int:id>", methods=["POST"])
+@login_required
+def perbaikan_delete(id):
+    data = db.get_or_404(Perbaikan, id)
+
+    db.session.delete(data)
+    db.session.commit()
+
+    flash("Data perbaikan berhasil dihapus.", "success")
+    return redirect(url_for("perbaikan"))
 
 def get_gedung_or_404():
     gedung_id = request.form.get("gedung_id", type=int)

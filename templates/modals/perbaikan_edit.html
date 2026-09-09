@@ -1,0 +1,46 @@
+<div class="modal fade" id="modalEditPerbaikan{{ perbaikan.id }}" tabindex="-1" aria-labelledby="modalEditPerbaikanLabel{{ perbaikan.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('perbaikan_edit', id=perbaikan.id) }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalEditPerbaikanLabel{{ perbaikan.id }}"><i class="bi bi-pencil-square me-2"></i>Edit Perbaikan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
+                            <div class="form-control bg-light">
+                                {{ perbaikan.perangkat.perangkat }} | {{ perbaikan.perangkat.merek }} | {{ perbaikan.perangkat.type }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
+                            <div class="form-control bg-light">
+                                {{ perbaikan.gedung.kampus }} - {{ perbaikan.gedung.nama_gedung }} - Lantai {{ perbaikan.gedung.lantai }} - {{ perbaikan.gedung.ruang }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="tgl_perbaikan{{ perbaikan.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-event me-1"></i>Tanggal Perbaikan</label>
+                            <input type="date" class="form-control" id="tgl_perbaikan{{ perbaikan.id }}" name="tgl_perbaikan" value="{{ perbaikan.tgl_perbaikan.strftime('%Y-%m-%d') if perbaikan.tgl_perbaikan else '' }}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="perbaikan{{ perbaikan.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Perbaikan</label>
+                            <textarea class="form-control" id="perbaikan{{ perbaikan.id }}" name="perbaikan" rows="4" placeholder="Jelaskan kerusakan atau bagian yang diperbaiki, dipisah koma(,)" required>{{ perbaikan.perbaikan or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

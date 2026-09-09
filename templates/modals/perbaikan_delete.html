@@ -1,0 +1,24 @@
+<div class="modal fade" id="modalDeletePerbaikan{{ perbaikan.id }}" tabindex="-1" aria-labelledby="modalDeletePerbaikanLabel{{ perbaikan.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('perbaikan_delete', id=perbaikan.id) }}">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalDeletePerbaikanLabel{{ perbaikan.id }}"><i class="bi bi-trash me-2"></i>Hapus Perbaikan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <p class="mb-2">Apakah Anda yakin ingin menghapus data perbaikan ini?</p>
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Data perbaikan <strong>{{ perbaikan.perangkat.perangkat }}</strong> akan dihapus.
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

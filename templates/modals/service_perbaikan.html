@@ -1,0 +1,46 @@
+<div class="modal fade" id="modalPerbaikanService{{ service.id }}" tabindex="-1" aria-labelledby="modalPerbaikanServiceLabel{{ service.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('service_perbaikan', id=service.id) }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalPerbaikanServiceLabel{{ service.id }}"><i class="bi bi-pencil-square me-2"></i>Perbaikan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="perangkat_id" value="{{ service.perangkat.id }}">
+                    <input type="hidden" name="gedung_id" value="{{ service.gedung.id }}">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
+                            <div class="form-control bg-light">
+                                {{ service.perangkat.perangkat }} | {{ service.perangkat.merek }} | {{ service.perangkat.type }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold"><i class="bi bi-geo-alt me-1"></i>Posisi</label>
+                            <div class="form-control bg-light">
+                                Kampus {{ service.gedung.kampus }} - {{ service.gedung.nama_gedung }} - Lantai {{ service.gedung.lantai }} - Ruang {{ service.gedung.ruang }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="tgl_perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-calendar-event me-1"></i>Tanggal Perbaikan</label>
+                            <input type="date" class="form-control" id="tgl_perbaikan{{ service.id }}" name="tgl_perbaikan" value="{{ service.tgl_perbaikan.strftime('%Y-%m-%d') if service.tgl_perbaikan else '' }}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="perbaikan{{ service.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Perbaikan</label>
+                            <textarea class="form-control" id="perbaikan{{ service.id }}" name="perbaikan" rows="3" placeholder="Jelaskan kerusakan atau bagian yang diperbaiki, dipisah koma(,)">{{ service.perbaikan or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan Perbaikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

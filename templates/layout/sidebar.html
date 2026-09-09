@@ -42,6 +42,13 @@
                     <i class="bi bi-box-seam me-2"></i>Perangkat
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="{{ url_for('perbaikan') }}" class="nav-link {% if request.endpoint == 'perbaikan' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-check-circle-fill me-2"></i>Perbaikan
+                </a>
+            </li>
+
         </ul>
 
         <hr class="border-secondary my-4">
