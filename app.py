@@ -4,9 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Service, Gedung, Perangkat, Perbaikan
+from models import db, User, Service, Gedung, Perangkat, Perbaikan, DetailPerbaikan
 from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
 from dotenv import load_dotenv
+from pdf.perbaikan_pdf import generate_perbaikan_pdf
 
 import os
 
@@ -178,30 +180,77 @@ def service_hapus(id):
 @app.route("/service/perbaikan/<int:id>", methods=["POST"])
 @login_required
 def service_perbaikan(id):
-	service = db.get_or_404(Service, id)
-	gedung = get_gedung_or_404()
-	perangkat_id = request.form.get("perangkat_id","").strip()
-	gedung_id = request.form.get("perangkat_id","").strip()
-	tgl_perbaikan = request.form.get("tgl_perbaikan", "").strip()
-	tgl_perbaikan_selanjutnya = request.form.get("tgl_perbaikan_selanjutnya", "").strip()
-	perbaikan = request.form.get("perbaikan", "").strip()
-	if not perangkat_id or not gedung_id or not tgl_perbaikan or not tgl_perbaikan_selanjutnya or not perbaikan:
-	    return redirect(url_for("service"))
-	service.perangkat_id=perangkat_id
-	service.status_service="Selesai"
-	service.tgl_perbaikan=parse_date(tgl_perbaikan)
-	service.tgl_perbaikan_selanjutnya=parse_date(tgl_perbaikan_selanjutnya)
-	db.session.commit()
+    service = db.get_or_404(Service, id)
+    try:
+        tgl_perbaikan = request.form.get("tgl_perbaikan","").strip()
+        if not tgl_perbaikan:
+            flash("Tanggal perbaikan wajib diisi.", "danger")
+            return redirect(url_for("service"))
+        try:
+            tanggal_perbaikan = parse_date(tgl_perbaikan)
+        except ValueError:
+            flash("Format tanggal perbaikan tidak valid.", "danger")
+            return redirect(url_for("service"))
+        uraian_list = request.form.getlist("uraian[]")
+        satuan_list = request.form.getlist("satuan[]")
+        vol_list = request.form.getlist("vol[]")
+        harga_list = request.form.getlist("harga_satuan[]")
+        print(uraian_list,satuan_list,vol_list,harga_list)
+        if not uraian_list:
+            flash("Minimal harus ada satu detail perbaikan.", "danger")
+            return redirect(url_for("service"))
+        if not (len(uraian_list)== len(satuan_list)== len(vol_list)== len(harga_list)):
+            flash("Data detail perbaikan tidak lengkap.", "danger")
+            return redirect(url_for("service"))
+        perbaikan = Perbaikan(
+            perangkat_id=service.perangkat_id,
+            gedung_id=service.gedung_id,
+            tgl_perbaikan=tanggal_perbaikan
+        )
+        db.session.add(perbaikan)
+        db.session.flush()
+        for i in range(len(uraian_list)):
+            uraian = uraian_list[i].strip()
+            satuan = satuan_list[i].strip()
+            vol = vol_list[i].strip()
+            harga_satuan = harga_list[i].strip()
+            if not uraian:
+                raise ValueError(f"Uraian perbaikan pada baris {i + 1} wajib diisi.")
+            try:
+                jumlah = int(satuan)
+                if jumlah < 1:
+                    raise ValueError
+            except (ValueError, TypeError):
+                raise ValueError(f"Satuan pada baris {i + 1} tidak valid.")
+            if vol not in ("PCS", "UNIT"):
+                raise ValueError(f"Volume pada baris {i + 1} tidak valid.")
+            try:
+                harga = Decimal(harga_satuan)
+                if harga < 0:
+                    raise ValueError
+            except (InvalidOperation, ValueError, TypeError):
+                raise ValueError(f"Harga satuan pada baris {i + 1} tidak valid.")
+            total_harga = Decimal(jumlah) * harga
+            detail = DetailPerbaikan(
+                perbaikan_id=perbaikan.id,
+                uraian=uraian,
+                satuan=jumlah,
+                vol=vol,
+                harga_satuan=harga,
+                total_harga=total_harga
+            )
+            db.session.add(detail)
+        service.status_service = "Selesai"
+        service.tgl_perbaikan = tanggal_perbaikan
+        db.session.commit()
 
-	perbaikan = Perbaikan(
-		perangkat_id=perangkat_id,
-		gedung_id=gedung_id,
-		tgl_perbaikan=parse_date(tgl_perbaikan),
-		perbaikan=perbaikan or None
-	)
-	db.session.add(perbaikan)
-	db.session.commit()
-	return redirect(url_for("service"))
+        flash("Uraian perbaikan berhasil disimpan.","success")
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Gagal menyimpan data perbaikan: {str(e)}","danger")
+
+    return redirect(url_for("service"))
 
 @app.route("/gedung")
 @login_required
@@ -327,12 +376,6 @@ def perangkat_hapus(id):
 
 	return redirect(url_for("perangkat"))
 
-@app.route("/logout", methods=["POST"])
-@login_required
-def logout():
-	logout_user()
-	return redirect(url_for("login"))
-
 @app.route("/perbaikan")
 @login_required
 def perbaikan():
@@ -353,7 +396,6 @@ def perbaikan_edit(id):
     if tgl_perbaikan:
         data.tgl_perbaikan = datetime.strptime(tgl_perbaikan, "%Y-%m-%d").date()
     db.session.commit()
-    flash("Data perbaikan berhasil diperbarui.", "success")
     return redirect(url_for("perbaikan"))
 
 @app.route("/perbaikan/delete/<int:id>", methods=["POST"])
@@ -366,6 +408,30 @@ def perbaikan_delete(id):
 
     flash("Data perbaikan berhasil dihapus.", "success")
     return redirect(url_for("perbaikan"))
+    
+@app.route("/logout", methods=["POST"])
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for("login"))
+
+@app.route("/perbaikan/pdf")
+@login_required
+def perbaikan_pdf():
+    tanggal = request.args.get("tanggal", "").strip()
+    if not tanggal:
+        flash("Tanggal wajib dipilih.", "warning")
+        return redirect(url_for("perbaikan"))
+    try:
+        tanggal = date.fromisoformat(tanggal)
+    except ValueError:
+        flash("Tanggal tidak valid.", "danger")
+        return redirect(url_for("perbaikan"))
+    pdf = generate_perbaikan_pdf(tanggal)
+    if pdf is None:
+        flash(f"Tidak ada data perbaikan pada tanggal {tanggal.strftime('%d/%m/%Y')}.", "warning")
+        return redirect(url_for("perbaikan"))
+    return pdf
 
 def get_gedung_or_404():
     gedung_id = request.form.get("gedung_id", type=int)
