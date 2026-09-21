@@ -10,28 +10,40 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="kampus{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-buildings me-1"></i>Kampus</label>
-                            <input type="text" class="form-control" id="kampus{{ gedung.id }}" name="kampus" value="{{ gedung.kampus }}" required>
+                            <label for="kampus{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-mortarboard me-1"></i>Kampus</label>
+                            <select class="form-select" id="kampus{{ gedung.id }}" name="kampus" required>
+                                <option value="" disabled>Pilih Kampus</option>
+                                {% for a_kampus in att_kampus %}
+                                    <option value="{{ a_kampus.nama_kampus }}" {% if gedung.kampus == a_kampus.nama_kampus %}selected{% endif %}>{{ a_kampus.nama_kampus }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="nama_gedung{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-building me-1"></i>Nama Gedung</label>
-                            <input type="text" class="form-control" id="nama_gedung{{ gedung.id }}" name="nama_gedung" value="{{ gedung.nama_gedung }}" required>
+                            <label for="gedung{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-buildings me-1"></i>Gedung</label>
+                            <select class="form-select" id="gedung{{ gedung.id }}" name="gedung" required>
+                                <option value="" disabled>Pilih Gedung</option>
+                                {% for a_gedung in att_gedung %}
+                                    <option value="{{ a_gedung.nama_gedung }}" {% if gedung.gedung == a_gedung.nama_gedung %}selected{% endif %}>{{ a_gedung.nama_gedung }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="lantai{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-layers me-1"></i>Lantai</label>
                             <select class="form-select" id="lantai{{ gedung.id }}" name="lantai" required>
-                                <option value="1" {% if gedung.lantai == "1" %}selected{% endif %}>Lantai 1</option>
-                                <option value="2" {% if gedung.lantai == "2" %}selected{% endif %}>Lantai 2</option>
-                                <option value="3" {% if gedung.lantai == "3" %}selected{% endif %}>Lantai 3</option>
-                                <option value="4" {% if gedung.lantai == "4" %}selected{% endif %}>Lantai 4</option>
-                                <option value="4.5" {% if gedung.lantai == "4.5" %}selected{% endif %}>Lantai 4.5</option>
-                                <option value="5" {% if gedung.lantai == "5" %}selected{% endif %}>Lantai 5</option>
-                                <option value="6" {% if gedung.lantai == "6" %}selected{% endif %}>Lantai 6</option>
+                                <option value="" disabled>Pilih Lantai</option>
+                                {% for a_lantai in att_lantai %}
+                                    <option value="{{ a_lantai.nama_lantai }}" {% if gedung.lantai == a_lantai.nama_lantai %}selected{% endif %}>{{ a_lantai.nama_lantai }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="ruang{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-door-open me-1"></i>Ruang</label>
-                            <input type="text" class="form-control" id="ruang{{ gedung.id }}" name="ruang" value="{{ gedung.ruang }}" required>
+                            <select class="form-select" id="ruang{{ gedung.id }}" name="ruang" required>
+                                <option value="" disabled>Pilih Ruang</option>
+                                {% for a_ruang in att_ruang %}
+                                    <option value="{{ a_ruang.nama_ruang }}" {% if gedung.ruang == a_ruang.nama_ruang %}selected{% endif %}>{{ a_ruang.nama_ruang }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-12">
                             <label for="keterangan{{ gedung.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1"></i>Keterangan</label>

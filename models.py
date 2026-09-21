@@ -24,7 +24,7 @@ class Gedung(db.Model):
 	__tablename__ = "gedung"
 	id = db.Column(db.Integer, primary_key=True)
 	kampus = db.Column(db.String(100), nullable=False)
-	nama_gedung = db.Column(db.String(100), nullable=False)
+	gedung = db.Column(db.String(100), nullable=False)
 	lantai = db.Column(db.String(3), nullable=False, default="1")
 	ruang = db.Column(db.String(100), nullable=False)
 	keterangan = db.Column(db.Text, nullable=True)
@@ -55,3 +55,23 @@ class DetailPerbaikan(db.Model):
 	vol = db.Column(db.Enum("PCS", "UNIT", name="satuan_perbaikan"), nullable=False)
 	harga_satuan = db.Column(db.Numeric(15, 2), nullable=False, default=0)
 	total_harga = db.Column(db.Numeric(15, 2), nullable=False, default=0)
+
+class Att_kampus(db.Model):
+	__tablename__ = "atribut_kampus"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_kampus = db.Column(db.String(100), nullable=False)
+
+class Att_gedung(db.Model):
+	__tablename__ = "atribut_gedung"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_gedung = db.Column(db.String(100), nullable=False)
+
+class Att_lantai(db.Model):
+	__tablename__ = "atribut_lantai"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_lantai = db.Column(db.String(100), nullable=False)
+
+class Att_ruang(db.Model):
+	__tablename__ = "atribut_ruang"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_ruang = db.Column(db.String(100), nullable=False)

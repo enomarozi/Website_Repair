@@ -1,49 +1,41 @@
 {% extends "layout/base.html" %}
 
-{% block title %}Gedung - ServiceHub{% endblock %}
+{% block title %}Atribut Lantai - ServiceHub{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1"><i class="bi bi-building me-2"></i>Gedung</h1>
-        <p class="text-body-secondary mb-0">Kelola lokasi gedung.</p>
+        <h1 class="h3 mb-1"><i class="bi bi-layers me-2"></i>Lantai</h1>
+        <p class="text-body-secondary mb-0">Kelola lokasi Lantai.</p>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahGedung">
-        <i class="bi bi-plus-lg me-1"></i>Tambah Gedung
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahLantai">
+        <i class="bi bi-plus-lg me-1"></i>Tambah Lantai
     </button>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
         <div class="table-responsive">
-            <table id="gedungTable" class="table table-hover align-middle mb-0">
+            <table id="lantaiTable" class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kampus</th>
-                        <th>Nama Gedung</th>
                         <th>Lantai</th>
-                        <th>Ruang</th>
-                        <th>Keterangan</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for gedung in data_gedung %}
+                    {% for lantai in data_lantai %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td class="fw-semibold">{{ gedung.kampus }}</td>
-                        <td>{{ gedung.gedung }}</td>
-                        <td class="text-nowrap">Lantai {{ gedung.lantai }}</td>
-                        <td class="text-nowrap">{{ gedung.ruang }}</td>
-                        <td style="min-width: 250px;">{{ gedung.keterangan or "-" }}</td>
+                        <td class="fw-semibold">{{ lantai.nama_lantai }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-1">
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-outline-primary"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalEditGedung{{ gedung.id }}"
+                                    data-bs-target="#modalEditLantai{{ lantai.id }}"
                                     title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -52,7 +44,7 @@
                                     type="button"
                                     class="btn btn-sm btn-outline-danger"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalDeleteGedung{{ gedung.id }}"
+                                    data-bs-target="#modalDeleteLantai{{ lantai.id }}"
                                     title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -65,13 +57,25 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bootstrap5.min.js"></script>
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container-fluid px-4 pt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
 <script>
 $(document).ready(function() {
-    $('#gedungTable').DataTable({
+    $('#lantaiTable').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50, 100],
         order: [[0, 'asc']],
@@ -79,7 +83,7 @@ $(document).ready(function() {
             {
                 orderable: false,
                 searchable: false,
-                targets: 6
+                targets: 2
             }
         ],
         language: {
@@ -88,7 +92,7 @@ $(document).ready(function() {
             info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
             infoEmpty: "Tidak ada data",
             zeroRecords: "Data tidak ditemukan",
-            emptyTable: "Belum ada data gedung",
+            emptyTable: "Belum ada data lantai",
             paginate: {
                 first: "Pertama",
                 last: "Terakhir",
@@ -99,10 +103,10 @@ $(document).ready(function() {
     });
 });
 </script>
-{% include "modals/gedung_tambah.html" %}
+{% include "modals_atribut/lantai_tambah.html" %}
 
-{% for gedung in data_gedung %}
-    {% include "modals/gedung_edit.html" %}
-    {% include "modals/gedung_delete.html" %}
+{% for lantai in data_lantai %}
+    {% include "modals_atribut/lantai_edit.html" %}
+    {% include "modals_atribut/lantai_delete.html" %}
 {% endfor %}
 {% endblock %}

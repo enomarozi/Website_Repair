@@ -1,0 +1,25 @@
+<div class="modal fade" id="modalTambahRuang" tabindex="-1" aria-labelledby="modalTambahRuangLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <form method="POST" action="{{ url_for('atribut.att_ruang_tambah') }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalTambahRuangLabel"><i class="bi bi-door-open me-2"></i>Tambah Ruang</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label for="nama_ruang" class="form-label fw-semibold"><i class="bi bi-door-open me-1"></i>Nama Ruang</label>
+                            <input type="text" class="form-control" id="nama_ruang" name="nama_ruang" placeholder="Masukkan nama ruang" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

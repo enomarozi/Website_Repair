@@ -4,11 +4,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Service, Gedung, Perangkat, Perbaikan, DetailPerbaikan
+from models import db, User, Service, Gedung, Perangkat, Perbaikan, DetailPerbaikan, Att_kampus, Att_gedung, Att_lantai, Att_ruang
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from dotenv import load_dotenv
 from pdf.perbaikan_pdf import generate_perbaikan_pdf
+from atribut import atribut
 
 import os
 
@@ -42,8 +43,8 @@ limiter = Limiter(
 	app=app,
 	default_limits=[],
 )
+app.register_blueprint(atribut)
 
-PILIHAN_LANTAI = {"1","2","3","4","4.5","5","6"}
 @login_manager.user_loader
 def load_user(user_id):
 	return db.session.get(User, int(user_id))
@@ -111,7 +112,7 @@ def dashboard():
 @login_required
 def service():
     data_service = db.session.execute(db.select(Service).order_by(Service.id.desc())).scalars().all()
-    data_gedung = db.session.execute(db.select(Gedung).order_by(Gedung.id, Gedung.kampus, Gedung.nama_gedung, Gedung.lantai, Gedung.ruang)).scalars().all()
+    data_gedung = db.session.execute(db.select(Gedung).order_by(Gedung.id, Gedung.kampus, Gedung.gedung, Gedung.lantai, Gedung.ruang)).scalars().all()
     data_perangkat = db.session.execute(db.select(Perangkat).order_by(Perangkat.id.desc())).scalars().all()
     return render_template(
         "service/index.html",
@@ -258,33 +259,63 @@ def gedung():
 	data_gedung = db.session.execute(
 		db.select(Gedung).order_by(Gedung.id.desc())
 	).scalars().all()
-
+	att_kampus = db.session.execute(
+		db.select(Att_kampus).order_by(Att_kampus.id.asc())
+	).scalars().all()
+	att_gedung = db.session.execute(
+		db.select(Att_gedung).order_by(Att_gedung.id.asc())
+	).scalars().all()
+	att_lantai = db.session.execute(
+		db.select(Att_lantai).order_by(Att_lantai.id.asc())
+	).scalars().all()
+	att_ruang = db.session.execute(
+		db.select(Att_ruang).order_by(Att_ruang.id.asc())
+	).scalars().all()
 	return render_template(
 		"gedung/index.html",
 		data_gedung=data_gedung,
+		att_kampus=att_kampus,
+		att_gedung=att_gedung,
+		att_lantai=att_lantai,
+		att_ruang=att_ruang,
 	)
 
 @app.route("/gedung/tambah", methods=["POST"])
 @login_required
 def gedung_tambah():
-	lantai = request.form.get("lantai")
-	if lantai not in PILIHAN_LANTAI:
-		abort(404)
-	kampus = request.form.get("kampus","").strip()
-	nama_gedung = request.form.get("nama_gedung", "").strip()
+	kampus = request.form.get("kampus", "").strip()
+	gedung = request.form.get("gedung", "").strip()
 	lantai = request.form.get("lantai", "").strip()
 	ruang = request.form.get("ruang", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
-	if not kampus or not nama_gedung or not lantai or not ruang:
+
+	if not kampus or not gedung or not lantai or not ruang:
 		return redirect(url_for("gedung"))
-	gedung = Gedung(
+
+	existing_kampus = db.session.execute(
+		db.select(Att_kampus).where(Att_kampus.nama_kampus == kampus)
+	).scalars().first()
+	existing_gedung = db.session.execute(
+		db.select(Att_gedung).where(Att_gedung.nama_gedung == gedung)
+	).scalars().first()
+	existing_lantai = db.session.execute(
+		db.select(Att_lantai).where(Att_lantai.nama_lantai == lantai)
+	).scalars().first()
+	existing_ruang = db.session.execute(
+		db.select(Att_ruang).where(Att_ruang.nama_ruang == ruang)
+	).scalars().first()
+
+	if not existing_kampus or not existing_gedung or not existing_lantai or not existing_ruang:
+		abort(404)
+
+	data_gedung = Gedung(
 		kampus=kampus,
-		nama_gedung=nama_gedung,
+		gedung=gedung,
 		lantai=lantai,
 		ruang=ruang,
 		keterangan=keterangan or None
 	)
-	db.session.add(gedung)
+	db.session.add(data_gedung)
 	db.session.commit()
 	return redirect(url_for("gedung"))
 
@@ -292,22 +323,36 @@ def gedung_tambah():
 @login_required
 def gedung_edit(id):
 	gedung = db.get_or_404(Gedung, id)
-	lantai = request.form.get("lantai")
-	if lantai not in PILIHAN_LANTAI:
-		abort(404)
-	kampus = request.form.get("kampus","").strip()
-	nama_gedung = request.form.get("nama_gedung", "").strip()
+	kampus = request.form.get("kampus", "").strip()
+	nama_gedung = request.form.get("gedung", "").strip()
 	lantai = request.form.get("lantai", "").strip()
 	ruang = request.form.get("ruang", "").strip()
 	keterangan = request.form.get("keterangan", "").strip()
+
 	if not kampus or not nama_gedung or not lantai or not ruang:
 		return redirect(url_for("gedung"))
 
-	gedung.kampus=kampus
-	gedung.nama_gedung=nama_gedung
-	gedung.lantai=lantai
-	gedung.ruang=ruang
-	gedung.keterangan=keterangan or None
+	existing_kampus = db.session.execute(
+		db.select(Att_kampus).where(Att_kampus.nama_kampus == kampus)
+	).scalars().first()
+	existing_gedung = db.session.execute(
+		db.select(Att_gedung).where(Att_gedung.nama_gedung == nama_gedung)
+	).scalars().first()
+	existing_lantai = db.session.execute(
+		db.select(Att_lantai).where(Att_lantai.nama_lantai == lantai)
+	).scalars().first()
+	existing_ruang = db.session.execute(
+		db.select(Att_ruang).where(Att_ruang.nama_ruang == ruang)
+	).scalars().first()
+
+	if not existing_kampus or not existing_gedung or not existing_lantai or not existing_ruang:
+		abort(404)
+
+	gedung.kampus = kampus
+	gedung.gedung = nama_gedung
+	gedung.lantai = lantai
+	gedung.ruang = ruang
+	gedung.keterangan = keterangan or None
 
 	db.session.commit()
 	return redirect(url_for("gedung"))

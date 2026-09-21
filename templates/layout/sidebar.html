@@ -54,6 +54,48 @@
         <hr class="border-secondary my-4">
 
         <div class="mb-2">
+            <small class="text-secondary text-uppercase fw-semibold">Atribut</small>
+        </div>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="{{ url_for('atribut.att_kampus') }}" class="nav-link text-white {% if request.endpoint == 'att_kampus' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-mortarboard me-2"></i>
+                    Kampus
+                </a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="{{ url_for('atribut.att_gedung') }}" class="nav-link text-white {% if request.endpoint == 'att_gedung' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-buildings me-2"></i>
+                    Gedung
+                </a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="{{ url_for('atribut.att_lantai') }}" class="nav-link text-white {% if request.endpoint == 'att_lantai' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-layers me-2"></i>
+                    Lantai
+                </a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-pills flex-column gap-1">
+            <li class="nav-item">
+                <a href="{{ url_for('atribut.att_ruang') }}" class="nav-link text-white {% if request.endpoint == 'att_ruang' %}active{% else %}text-white{% endif %}">
+                    <i class="bi bi-door-open me-2"></i>
+                    Ruang
+                </a>
+            </li>
+        </ul>
+
+        <hr class="border-secondary my-4">
+
+        <div class="mb-2">
             <small class="text-secondary text-uppercase fw-semibold">Sistem</small>
         </div>
 
@@ -74,7 +116,7 @@
                     </div>
                     <div class="lh-sm">
                         <div class="fw-semibold">ServiceHub</div>
-                        <small class="text-secondary">v1.0.0</small>
+                        <small class="text-secondary">v1.2.0</small>
                     </div>
                 </div>
             </div>
