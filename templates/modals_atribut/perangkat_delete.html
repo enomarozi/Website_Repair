@@ -1,16 +1,16 @@
-<div class="modal fade" id="modalDeleteRuang{{ ruang.id }}" tabindex="-1" aria-labelledby="modalDeleteRuangLabel{{ ruang.id }}" aria-hidden="true">
+<div class="modal fade" id="modalDeletePerangkat{{ perangkat.id }}" tabindex="-1" aria-labelledby="modalDeletePerangkatLabel{{ perangkat.id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <form method="POST" action="{{ url_for('atribut.att_ruang_delete', id=ruang.id) }}">
+            <form method="POST" action="{{ url_for('atribut.att_perangkat_delete', id=perangkat.id) }}">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalDeleteRuangLabel{{ ruang.id }}"><i class="bi bi-trash me-2"></i>Hapus Ruang</h5>
+                    <h5 class="modal-title" id="modalDeletePerangkatLabel{{ perangkat.id }}"><i class="bi bi-trash me-2"></i>Hapus Perangkat</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <p class="mb-3">Apakah kamu yakin ingin menghapus Ruang berikut?</p>
+                    <p class="mb-3">Apakah kamu yakin ingin menghapus perangkat berikut?</p>
                     <div class="alert alert-warning mb-0">
-                        <div class="fw-semibold"><i class="bi bi-door-open me-2"></i>{{ ruang.nama_ruang }}</div>
+                        <div class="fw-semibold"><i class="bi bi-box-seam me-2"></i>{{ perangkat.nama_perangkat }}</div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">

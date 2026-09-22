@@ -75,3 +75,13 @@ class Att_ruang(db.Model):
 	__tablename__ = "atribut_ruang"
 	id = db.Column(db.Integer, primary_key=True)
 	nama_ruang = db.Column(db.String(100), nullable=False)
+
+class Att_perangkat(db.Model):
+	__tablename__ = "atribut_perangkat"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_perangkat = db.Column(db.String(100), nullable=False)
+
+class Att_merek(db.Model):
+	__tablename__ = "atribut_merek"
+	id = db.Column(db.Integer, primary_key=True)
+	nama_merek = db.Column(db.String(100), nullable=False)

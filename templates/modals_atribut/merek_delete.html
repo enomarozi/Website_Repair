@@ -1,16 +1,16 @@
-<div class="modal fade" id="modalDeleteRuang{{ ruang.id }}" tabindex="-1" aria-labelledby="modalDeleteRuangLabel{{ ruang.id }}" aria-hidden="true">
+<div class="modal fade" id="modalDeleteMerek{{ merek.id }}" tabindex="-1" aria-labelledby="modalDeleteMerekLabel{{ merek.id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
-            <form method="POST" action="{{ url_for('atribut.att_ruang_delete', id=ruang.id) }}">
+            <form method="POST" action="{{ url_for('atribut.att_merek_delete', id=merek.id) }}">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="modalDeleteRuangLabel{{ ruang.id }}"><i class="bi bi-trash me-2"></i>Hapus Ruang</h5>
+                    <h5 class="modal-title" id="modalDeleteMerekLabel{{ merek.id }}"><i class="bi bi-trash me-2"></i>Hapus Merek</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <p class="mb-3">Apakah kamu yakin ingin menghapus Ruang berikut?</p>
+                    <p class="mb-3">Apakah kamu yakin ingin menghapus merek berikut?</p>
                     <div class="alert alert-warning mb-0">
-                        <div class="fw-semibold"><i class="bi bi-door-open me-2"></i>{{ ruang.nama_ruang }}</div>
+                        <div class="fw-semibold"><i class="bi bi-tag me-2"></i>{{ merek.nama_merek }}</div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">

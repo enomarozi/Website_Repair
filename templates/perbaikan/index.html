@@ -10,7 +10,11 @@
     </div>
     <form action="{{ url_for('perbaikan_pdf') }}" method="GET" target="_blank" class="d-flex align-items-center gap-2">
         <input type="date" name="tanggal" class="form-control" required>
-        <button type="submit" class="btn btn-danger text-nowrap"><i class="bi bi-file-earmark-pdf me-1"></i>Cetak PDF</button>
+        <input type="text" name="nomor" class="form-control" placeholder="Nomor Invoice" required>
+        <input type="text" name="hal" class="form-control" placeholder="Hal" required>
+        <button type="submit" class="btn btn-danger text-nowrap">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Cetak PDF
+        </button>
     </form>
 </div>
 

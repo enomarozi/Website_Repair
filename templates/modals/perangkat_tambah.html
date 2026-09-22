@@ -10,12 +10,22 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label for="perangkat" class="form-label fw-semibold"><i class="bi bi-box-seam me-1 text-primary"></i>Nama Perangkat</label>
-                            <input type="text" class="form-control" id="perangkat" name="perangkat" placeholder="Contoh: AC, Printer, Laptop, CCTV" required>
+                            <label for="perangkat" class="form-label fw-semibold"><i class="bi bi-box-seam me-1"></i>Perangkat</label>
+                            <select class="form-select" id="perangkat" name="perangkat" required>
+                                <option value="" selected disabled>Pilih Perangkat</option>
+                                {% for a_perangkat in att_perangkat %}
+                                    <option value="{{ a_perangkat.nama_perangkat }}">{{ a_perangkat.nama_perangkat }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-12">
                             <label for="merek" class="form-label fw-semibold"><i class="bi bi-tag me-1 text-primary"></i>Merek</label>
-                            <input type="text" class="form-control" id="merek" name="merek" placeholder="Masukkan merek perangkat" required>
+                            <select class="form-select" id="merek" name="merek" required>
+                                <option value="" selected disabled>Pilih Merek</option>
+                                {% for a_merek in att_merek %}
+                                    <option value="{{ a_merek.nama_merek }}">{{ a_merek.nama_merek }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-12">
                             <label for="type" class="form-label fw-semibold"><i class="bi bi-card-text me-1 text-primary"></i>Type / Model</label>

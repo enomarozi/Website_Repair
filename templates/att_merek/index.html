@@ -1,45 +1,41 @@
 {% extends "layout/base.html" %}
 
-{% block title %}Data Perangkat - ServiceHub{% endblock %}
+{% block title %}Atribut Merek - ServiceHub{% endblock %}
 
 {% block content %}
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
     <div>
-        <h1 class="h3 mb-1"><i class="bi bi-box-seam me-2"></i>Data Perangkat</h1>
-        <p class="text-body-secondary mb-0">Kelola data perangkat.</p>
+        <h1 class="h3 mb-1"><i class="bi bi-tag me-2"></i>Merek</h1>
+        <p class="text-body-secondary mb-0">Kelola lokasi Merek.</p>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahPerangkat">
-        <i class="bi bi-plus-lg me-2"></i>Tambah Perangkat
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahMerek">
+        <i class="bi bi-plus-lg me-1"></i>Tambah Merek
     </button>
 </div>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
         <div class="table-responsive">
-            <table id="perangkatTable" class="table table-hover align-middle mb-0">
+            <table id="merekTable" class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Perangkat</th>
                         <th>Merek</th>
-                        <th>Type</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for perangkat in data_perangkat %}
+                    {% for merek in data_merek %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td class="fw-semibold">{{ perangkat.perangkat }}</td>
-                        <td class="fw-semibold">{{ perangkat.merek }}</td>
-                        <td class="fw-semibold">{{ perangkat.type }}</td>
+                        <td class="fw-semibold">{{ merek.nama_merek }}</td>
                         <td>
                             <div class="d-flex justify-content-center gap-1">
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-outline-primary"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalEditPerangkat{{ perangkat.id }}"
+                                    data-bs-target="#modalEditMerek{{ merek.id }}"
                                     title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -48,7 +44,7 @@
                                     type="button"
                                     class="btn btn-sm btn-outline-danger"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#modalDeletePerangkat{{ perangkat.id }}"
+                                    data-bs-target="#modalDeleteMerek{{ merek.id }}"
                                     title="Hapus">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -61,13 +57,25 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bootstrap5.min.js"></script>
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container-fluid px-4 pt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
 <script>
 $(document).ready(function() {
-    $('#perangkatTable').DataTable({
+    $('#merekTable').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50, 100],
         order: [[0, 'asc']],
@@ -75,7 +83,7 @@ $(document).ready(function() {
             {
                 orderable: false,
                 searchable: false,
-                targets: 4
+                targets: 2
             }
         ],
         language: {
@@ -84,7 +92,7 @@ $(document).ready(function() {
             info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
             infoEmpty: "Tidak ada data",
             zeroRecords: "Data tidak ditemukan",
-            emptyTable: "Belum ada data perangkat",
+            emptyTable: "Belum ada data merek",
             paginate: {
                 first: "Pertama",
                 last: "Terakhir",
@@ -95,10 +103,10 @@ $(document).ready(function() {
     });
 });
 </script>
-{% include "modals/perangkat_tambah.html" %}
+{% include "modals_atribut/merek_tambah.html" %}
 
-{% for perangkat in data_perangkat %}
-    {% include "modals/perangkat_edit.html" %}
-    {% include "modals/perangkat_delete.html" %}
+{% for merek in data_merek %}
+    {% include "modals_atribut/merek_edit.html" %}
+    {% include "modals_atribut/merek_delete.html" %}
 {% endfor %}
 {% endblock %}

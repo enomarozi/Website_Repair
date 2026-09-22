@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
-from models import db, Att_kampus, Att_gedung, Att_lantai, Att_ruang
+from models import db, Att_kampus, Att_gedung, Att_lantai, Att_ruang, Att_perangkat, Att_merek
 
 atribut = Blueprint("atribut", __name__, url_prefix="/atribut")
 
@@ -221,3 +221,113 @@ def att_ruang_delete(id):
     db.session.commit()
 
     return redirect(url_for("atribut.att_ruang"))
+
+###### ATT PERANGKAT ######
+
+@atribut.route("/att_perangkat")
+@login_required
+def att_perangkat():
+    data_perangkat = db.session.execute(db.select(Att_perangkat).order_by(Att_perangkat.id.desc())).scalars().all()
+    return render_template(
+        "att_perangkat/index.html",
+        data_perangkat=data_perangkat,
+    )
+
+@atribut.route("/att_perangkat/tambah", methods=["POST"])
+@login_required
+def att_perangkat_tambah():
+    nama_perangkat = request.form.get("nama_perangkat", "").strip()
+    existing = db.session.execute(db.select(Att_perangkat).where(db.func.lower(Att_perangkat.nama_perangkat) == nama_perangkat.lower())).scalars().first()
+    if existing:
+        flash("Nama Perangkat sudah terdaftar.", "danger")
+        return redirect(url_for("atribut.att_perangkat"))
+    if not nama_perangkat:
+        return redirect(url_for("atribut.att_perangkat"))
+    att_perangkat = Att_perangkat(
+        nama_perangkat=nama_perangkat,
+    )
+    print(att_perangkat)
+    db.session.add(att_perangkat)
+    db.session.commit()
+    return redirect(url_for("atribut.att_perangkat"))
+
+@atribut.route("/att_perangkat/edit/<int:id>", methods=["POST"])
+@login_required
+def att_perangkat_edit(id):
+    att_perangkat = db.get_or_404(Att_perangkat, id)
+    nama_perangkat = request.form.get("nama_perangkat","").strip()
+    existing = db.session.execute(db.select(Att_perangkat).where(db.func.lower(Att_perangkat.nama_perangkat) == nama_perangkat.lower())).scalars().first()
+    if existing:
+        flash("Nama Perangkat sudah terdaftar.", "danger")
+        return redirect(url_for("atribut.att_perangkat"))
+    if not nama_perangkat:
+        return redirect(url_for("atribut.att_perangkat"))
+
+    att_perangkat.nama_perangkat=nama_perangkat
+
+    db.session.commit()
+    return redirect(url_for("atribut.att_perangkat"))
+
+@atribut.route("/att_perangkat/hapus/<int:id>", methods=["POST"])
+@login_required
+def att_perangkat_delete(id):
+    att_perangkat = db.get_or_404(Att_perangkat, id)
+    db.session.delete(att_perangkat)
+    db.session.commit()
+
+    return redirect(url_for("atribut.att_perangkat"))
+
+###### ATT MEREK ######
+
+@atribut.route("/att_merek")
+@login_required
+def att_merek():
+    data_merek = db.session.execute(db.select(Att_merek).order_by(Att_merek.id.desc())).scalars().all()
+    return render_template(
+        "att_merek/index.html",
+        data_merek=data_merek,
+    )
+
+@atribut.route("/att_merek/tambah", methods=["POST"])
+@login_required
+def att_merek_tambah():
+    nama_merek = request.form.get("nama_merek", "").strip()
+    existing = db.session.execute(db.select(Att_merek).where(db.func.lower(Att_merek.nama_merek) == nama_merek.lower())).scalars().first()
+    if existing:
+        flash("Nama Merek sudah terdaftar.", "danger")
+        return redirect(url_for("atribut.att_merek"))
+    if not nama_merek:
+        return redirect(url_for("atribut.att_merek"))
+    att_merek = Att_merek(
+        nama_merek=nama_merek,
+    )
+    print(att_merek)
+    db.session.add(att_merek)
+    db.session.commit()
+    return redirect(url_for("atribut.att_merek"))
+
+@atribut.route("/att_merek/edit/<int:id>", methods=["POST"])
+@login_required
+def att_merek_edit(id):
+    att_merek = db.get_or_404(Att_merek, id)
+    nama_merek = request.form.get("nama_merek","").strip()
+    existing = db.session.execute(db.select(Att_merek).where(db.func.lower(Att_merek.nama_merek) == nama_merek.lower())).scalars().first()
+    if existing:
+        flash("Nama Merek sudah terdaftar.", "danger")
+        return redirect(url_for("atribut.att_merek"))
+    if not nama_merek:
+        return redirect(url_for("atribut.att_merek"))
+
+    att_merek.nama_merek=nama_merek
+
+    db.session.commit()
+    return redirect(url_for("atribut.att_merek"))
+
+@atribut.route("/att_merek/hapus/<int:id>", methods=["POST"])
+@login_required
+def att_merek_delete(id):
+    att_merek = db.get_or_404(Att_merek, id)
+    db.session.delete(att_merek)
+    db.session.commit()
+
+    return redirect(url_for("atribut.att_merek"))

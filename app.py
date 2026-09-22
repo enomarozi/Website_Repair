@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from models import db, User, Service, Gedung, Perangkat, Perbaikan, DetailPerbaikan, Att_kampus, Att_gedung, Att_lantai, Att_ruang
+from models import db, User, Service, Gedung, Perangkat, Perbaikan, DetailPerbaikan, Att_kampus, Att_gedung, Att_lantai, Att_ruang, Att_perangkat, Att_merek
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from dotenv import load_dotenv
@@ -372,10 +372,17 @@ def perangkat():
 	data_perangkat = db.session.execute(
 		db.select(Perangkat).order_by(Perangkat.id.desc())
 	).scalars().all()
-
+	att_perangkat = db.session.execute(
+		db.select(Att_perangkat).order_by(Att_perangkat.id.asc())
+	).scalars().all()
+	att_merek = db.session.execute(
+		db.select(Att_merek).order_by(Att_merek.id.asc())
+	).scalars().all()
 	return render_template(
 		"perangkat/index.html",
 		data_perangkat=data_perangkat,
+		att_perangkat=att_perangkat,
+		att_merek=att_merek,
 	)
 
 @app.route("/perangkat/tambah", methods=["POST"])
@@ -386,6 +393,7 @@ def perangkat_tambah():
 	type = request.form.get("type", "").strip()
 	if not perangkat or not merek or not type:
 		return redirect(url_for("perangkat"))
+
 	perangkat = Perangkat(
 		perangkat=perangkat,
 		merek=merek,
@@ -464,7 +472,9 @@ def logout():
 @login_required
 def perbaikan_pdf():
     tanggal = request.args.get("tanggal", "").strip()
-    if not tanggal:
+    nomor = request.args.get("nomor", "").strip()
+    hal = request.args.get("hal", "").strip()
+    if not tanggal or not nomor or not hal:
         flash("Tanggal wajib dipilih.", "warning")
         return redirect(url_for("perbaikan"))
     try:
@@ -472,7 +482,7 @@ def perbaikan_pdf():
     except ValueError:
         flash("Tanggal tidak valid.", "danger")
         return redirect(url_for("perbaikan"))
-    pdf = generate_perbaikan_pdf(tanggal)
+    pdf = generate_perbaikan_pdf(tanggal, nomor, hal)
     if pdf is None:
         flash(f"Tidak ada data perbaikan pada tanggal {tanggal.strftime('%d/%m/%Y')}.", "warning")
         return redirect(url_for("perbaikan"))

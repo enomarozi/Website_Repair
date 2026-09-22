@@ -11,11 +11,21 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="perangkat{{ perangkat.id }}" class="form-label fw-semibold"><i class="bi bi-box-seam me-1 text-primary"></i>Nama Perangkat</label>
-                            <input type="text" class="form-control" id="perangkat{{ perangkat.id }}" name="perangkat" value="{{ perangkat.perangkat }}" placeholder="Contoh: AC, Printer, Laptop, CCTV" required>
+                            <select class="form-select" id="perangkat{{ perangkat.id }}" name="perangkat" required>
+                                <option value="" disabled>Pilih Perangkat</option>
+                                {% for a_perangkat in att_perangkat %}
+                                    <option value="{{ a_perangkat.nama_perangkat }}" {% if perangkat.perangkat == a_perangkat.nama_perangkat %}selected{% endif %}>{{ a_perangkat.nama_perangkat }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="merek{{ perangkat.id }}" class="form-label fw-semibold"><i class="bi bi-tag me-1 text-primary"></i>Merek</label>
-                            <input type="text" class="form-control" id="merek{{ perangkat.id }}" name="merek" value="{{ perangkat.merek }}" placeholder="Masukkan merek perangkat" required>
+                            <select class="form-select" id="merek{{ perangkat.id }}" name="merek" required>
+                                <option value="" disabled>Pilih Merek</option>
+                                {% for a_merek in att_merek %}
+                                    <option value="{{ a_merek.nama_merek }}" {% if perangkat.merek == a_merek.nama_merek %}selected{% endif %}>{{ a_merek.nama_merek }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="type{{ perangkat.id }}" class="form-label fw-semibold"><i class="bi bi-card-text me-1 text-primary"></i>Type / Model</label>
