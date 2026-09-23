@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, abort, flash
+from flask import Flask, render_template, request, redirect, url_for, abort, flash, send_file
 from flask_login import LoginManager, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf.csrf import CSRFProtect
@@ -10,7 +10,8 @@ from decimal import Decimal, InvalidOperation
 from dotenv import load_dotenv
 from pdf.perbaikan_pdf import generate_perbaikan_pdf
 from atribut import atribut
-
+from io import BytesIO
+import qrcode
 import os
 
 load_dotenv()
@@ -22,7 +23,7 @@ if not secret_key:
 
 app = Flask(__name__)
 
-app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db_repair.db"
@@ -488,6 +489,35 @@ def perbaikan_pdf():
         return redirect(url_for("perbaikan"))
     return pdf
 
+@app.route("/perbaikan/qr/<int:id>")
+@login_required
+def perbaikan_qr(id):
+    perbaikan = db.get_or_404(Perbaikan, id)
+
+    qr_url = url_for(
+        "perbaikan_qr_info",
+        id=perbaikan.id,
+        _external=True
+    )
+
+    qr = qrcode.make(qr_url)
+
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    return send_file(buffer, mimetype="image/png")
+
+
+@app.route("/perbaikan/qr/info/<int:id>")
+def perbaikan_qr_info(id):
+    perbaikan = db.get_or_404(Perbaikan, id)
+
+    return render_template(
+        "perbaikan/qr.html",
+        perbaikan=perbaikan
+    )
+
 def get_gedung_or_404():
     gedung_id = request.form.get("gedung_id", type=int)
     if not gedung_id:
@@ -502,4 +532,4 @@ if __name__ == "__main__":
 	with app.app_context():
 		db.create_all()
 
-	app.run(debug=True)
+	app.run(debug=True, host="192.168.100.21", port="80")

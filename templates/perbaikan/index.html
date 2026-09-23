@@ -29,6 +29,7 @@
                         <th>Posisi</th>
                         <th>Perbaikan</th>
                         <th>Tanggal Selesai</th>
+                        <th>QR</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -56,6 +57,11 @@
                             {% endif %}
                         </td>
                         <td>{{ perbaikan.tgl_perbaikan.strftime("%d %b %Y") }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('perbaikan_qr', id=perbaikan.id) }}" target="_blank" class="btn btn-sm btn-outline-dark" title="Generate QR">
+                                <i class="bi bi-qr-code"></i>
+                            </a>
+                        </td>
                         <td>
                             <div class="d-flex justify-content-center gap-1">
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditPerbaikan{{ perbaikan.id }}" title="Edit">
